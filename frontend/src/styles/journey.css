@@ -1,0 +1,492 @@
+/* Journey Trail Styles
+ * The path you walk, not the syllabus you read
+ */
+
+:root {
+    --trail-bg: var(--editorial-bg, #f8f5ef);
+    --trail-ink: #2a2a2a;
+    --trail-ink-muted: #4e4d4d;
+    --trail-ink-light: #aaa;
+    --trail-walked: #2a2a2a;
+}
+
+/* Main container */
+.trail-container {
+    position: relative;
+    width: 100%;
+    padding: 4rem 0;
+    overflow: visible;
+}
+
+/* Annotations layer */
+.trail-annotations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.trail-annotation {
+    position: absolute;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-style: italic;
+    color: var(--trail-ink);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    letter-spacing: 0.02em;
+}
+
+.trail-annotation.visible {
+    opacity: 0.35;
+}
+
+.trail-annotation.left {
+    left: 15%;
+    transform: translateY(-50%);
+}
+
+.trail-annotation.right {
+    right: 15%;
+    transform: translateY(-50%);
+    text-align: right;
+}
+
+/* Phase markers */
+.trail-phase {
+    position: absolute;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--trail-ink);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.trail-phase.visible {
+    opacity: 0.5;
+}
+
+.trail-phase.left {
+    left: 12%;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left center;
+}
+
+.trail-phase.right {
+    right: 12%;
+    transform: rotate(90deg) translateX(50%);
+    transform-origin: right center;
+}
+
+/* Guide lines */
+.trail-guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: repeating-linear-gradient(to bottom,
+            transparent 0px,
+            transparent 4px,
+            var(--trail-ink-muted) 4px,
+            var(--trail-ink-muted) 8px);
+    opacity: 0.4;
+}
+
+.trail-guide.left {
+    left: 25%;
+}
+
+.trail-guide.right {
+    right: 25%;
+}
+
+/* Trail SVG */
+.trail-svg {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    z-index: 1;
+    overflow: visible;
+}
+
+/* Path ahead - dashed, faded */
+.trail-path-ahead {
+    fill: none;
+    stroke: var(--trail-ink-light);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 8 6;
+    opacity: 0.4;
+}
+
+/* Path walked - solid, darker */
+.trail-path-walked {
+    fill: none;
+    stroke: var(--trail-ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0.8;
+}
+
+/* Trail steps container */
+.trail-steps {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 900px;
+    z-index: 10;
+}
+
+/* Trail step - positioned element */
+.trail-step {
+    position: absolute;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Alternating positions - aligned with path zigzag (120px offset) */
+.trail-step.left {
+    left: 50%;
+    margin-left: -220px;
+}
+
+.trail-step.right {
+    left: 50%;
+    margin-left: 30px;
+}
+
+/* Position each step vertically is now handled dynamically in JourneyNode.jsx */
+
+.trail-step:hover {
+    transform: translateY(-2px);
+}
+
+/* Box card inside step */
+.trail-box {
+    position: relative;
+    display: inline-block;
+    background: var(--trail-bg);
+    border: 1px solid var(--trail-ink);
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.trail-step:hover .trail-box {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.trail-step.current .trail-box {
+    border-width: 2px;
+}
+
+.trail-step.walked .trail-box {
+    border-color: var(--trail-walked);
+}
+
+.trail-step.distant .trail-box {
+    border-style: dashed;
+    border-color: var(--trail-ink-light);
+}
+
+/* Node number circle - positioned at top-left corner */
+.trail-number {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--trail-bg);
+    border: 1.5px solid var(--trail-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    color: var(--trail-ink);
+    z-index: 5;
+}
+
+.trail-step.current .trail-number {
+    background: var(--trail-ink);
+    color: var(--trail-bg);
+}
+
+.trail-step.walked .trail-number {
+    background: var(--trail-walked);
+    border-color: var(--trail-walked);
+    color: white;
+}
+
+.trail-step.distant .trail-number {
+    border-color: var(--trail-ink-light);
+    color: var(--trail-ink-light);
+}
+
+/* Connector dot to path - on the side of box */
+.trail-connector {
+    position: absolute;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--trail-ink);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.trail-step.left .trail-connector {
+    right: -3px;
+}
+
+.trail-step.right .trail-connector {
+    left: -3px;
+}
+
+.trail-step.walked .trail-connector {
+    background: var(--trail-walked);
+}
+
+.trail-step.distant .trail-connector {
+    background: var(--trail-ink-light);
+}
+
+/* Box title */
+.trail-box-title {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--trail-ink);
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* You are here indicator */
+.trail-here {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    font-style: italic;
+    color: var(--trail-ink-muted);
+    margin-top: 0.15rem;
+}
+
+/* Current position indicator */
+.trail-current-marker {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--trail-ink);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(42, 42, 42, 0.15);
+    z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .trail-annotation {
+        display: none;
+    }
+
+    .trail-phase {
+        display: none;
+    }
+
+    /* Video Cards */
+    .video-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .video-card {
+        display: block;
+        text-decoration: none;
+        background: var(--step-paper);
+        border: 1px solid var(--step-ink-light);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .video-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-color: var(--step-ink-muted);
+    }
+
+    .video-thumbnail {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #000;
+        overflow: hidden;
+    }
+
+    .video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+    }
+
+    .video-card:hover .video-thumbnail img {
+        opacity: 1;
+    }
+
+    .video-play-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .video-info {
+        padding: 1rem;
+    }
+
+    .video-title {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        color: var(--step-ink);
+        margin-bottom: 0.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .video-channel {
+        font-family: var(--font-sans);
+        font-size: 0.8rem;
+        color: var(--step-ink-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .video-tag {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .trail-guide {
+        display: none;
+    }
+
+    .trail-container {
+        padding: 2rem 1rem;
+    }
+
+    .trail-step {
+        width: 140px;
+    }
+
+    .trail-step.left {
+        margin-left: -160px;
+    }
+
+    .trail-step.right {
+        margin-left: 20px;
+    }
+
+    .trail-box {
+        padding: 0.3rem 0.6rem;
+    }
+
+    .trail-box-title {
+        font-size: 0.75rem;
+    }
+
+    .trail-number {
+        width: 18px;
+        height: 18px;
+        top: -9px;
+        left: -9px;
+        font-size: 0.6rem;
+    }
+}
+
+/* Journey page specific */
+.journey-page {
+    min-height: 100vh;
+    background: var(--trail-bg);
+    padding-top: 5rem;
+}
+
+.journey-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.journey-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--trail-ink);
+    margin: 0 0 0.5rem;
+}
+
+.journey-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--trail-ink-muted);
+    font-style: italic;
+    margin: 0;
+}
+
+/* Progress indicator */
+.journey-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: var(--trail-ink-muted);
+}
+
+.journey-progress-bar {
+    width: 100px;
+    height: 4px;
+    background: var(--trail-ink-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.journey-progress-fill {
+    height: 100%;
+    background: var(--trail-walked);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
