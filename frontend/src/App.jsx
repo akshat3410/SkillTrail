@@ -18,7 +18,7 @@ import './index.css'
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename={import.meta.env.BASE_URL}>
         <div 
           className="min-h-screen" 
           style={{ background: 'var(--editorial-bg)' }}
