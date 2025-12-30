@@ -1,6 +1,7 @@
 # SkillTrail - Visual Learning Roadmap Platform
 
-[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://akshat3410.github.io/SkillTrail/) 
+### 🚀 **Live Demo:** [https://akshat3410.github.io/SkillTrail/](https://akshat3410.github.io/SkillTrail/)
+
 [![GitHub](https://img.shields.io/badge/github-repo-black.svg)](https://github.com/akshat3410/SkillTrail)
 
 A visual learning platform where users learn skills as a scrollable animated journey. Scroll through beautifully animated roadmaps, click topics to deep dive, and track your progress. Now featuring a complete **Generative AI & Prompt Engineering** course.
