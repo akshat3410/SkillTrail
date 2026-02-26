@@ -1,5 +1,7 @@
 # SkillTrail
 
+### 🚀 **Live Demo:** [https://akshat3410.github.io/SkillTrail/](https://akshat3410.github.io/SkillTrail/)
+
 **Visual learning roadmap platform.** Scroll through animated trails, click topics to learn, track your progress.
 
 [![GitHub](https://img.shields.io/badge/github-repo-black.svg)](https://github.com/akshat3410/SkillTrail)
