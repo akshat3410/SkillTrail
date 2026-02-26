@@ -1,14 +1,15 @@
 import type { NextConfig } from "next";
 
+const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
+
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*',
-      },
-    ]
+  output: 'export',
+  basePath: isGitHubPages ? '/SkillTrail' : '',
+  assetPrefix: isGitHubPages ? '/SkillTrail/' : '',
+  images: {
+    unoptimized: true,
   },
+  trailingSlash: true,
 };
 
 export default nextConfig;

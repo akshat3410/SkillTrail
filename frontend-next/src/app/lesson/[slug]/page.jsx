@@ -1,4 +1,8 @@
 import { lessonData } from '@/data/lesson-mock';
+
+export function generateStaticParams() {
+  return [{ slug: 'git-fundamentals' }, { slug: 'genai' }];
+}
 import { roadmapData } from '@/data/roadmap-mock';
 import RoadmapHeader from '@/components/roadmap/RoadmapHeader';
 import LessonSidebar from '@/components/lesson/LessonSidebar';
