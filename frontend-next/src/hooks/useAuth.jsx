@@ -11,14 +11,17 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 1. Check active session
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
@@ -29,6 +32,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signInWithGoogle = async () => {
+    if (!supabase) return
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -39,6 +43,7 @@ export function AuthProvider({ children }) {
   }
 
   const signInWithGitHub = async () => {
+    if (!supabase) return
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -49,7 +54,7 @@ export function AuthProvider({ children }) {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    if (supabase) await supabase.auth.signOut()
     setUser(null)
     setSession(null)
   }
