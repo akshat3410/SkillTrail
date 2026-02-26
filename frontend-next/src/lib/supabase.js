@@ -3,26 +3,34 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Hard-fail if credentials are missing in ANY environment.
-// Never fall back to placeholder URLs — that sends auth tokens
-// and user data to an unknown third-party domain.
-if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-        'Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL and/or NEXT_PUBLIC_SUPABASE_ANON_KEY. '
-        + 'Add them to your .env.local file.'
-    )
-}
+let _supabase = null
 
-export const supabase = createClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
+function getSupabase() {
+    if (_supabase) return _supabase
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        // During static build (CI), env vars may not be available.
+        // Return null — features requiring Supabase will be disabled.
+        if (typeof window === 'undefined') return null
+
+        console.warn(
+            'Missing NEXT_PUBLIC_SUPABASE_URL and/or NEXT_PUBLIC_SUPABASE_ANON_KEY. '
+            + 'Auth and cloud sync features are disabled.'
+        )
+        return null
+    }
+
+    _supabase = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
             detectSessionInUrl: true,
             persistSession: true,
-            autoRefreshToken: true
-        }
-    }
-)
+            autoRefreshToken: true,
+        },
+    })
 
+    return _supabase
+}
+
+export const supabase = typeof window !== 'undefined' ? getSupabase() : getSupabase()
 export default supabase
+export { getSupabase }
