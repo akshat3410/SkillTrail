@@ -1,7 +1,18 @@
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List, Literal, Optional
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 
+
+# ==================
+# Status enum (single source of truth)
+# ==================
+
+ProgressStatus = Literal["not_started", "in_progress", "completed"]
+
+
+# ==================
+# Roadmap schemas
+# ==================
 
 class RoadmapBase(BaseModel):
     """Base schema for roadmap."""
@@ -18,6 +29,10 @@ class RoadmapResponse(RoadmapBase):
         from_attributes = True
 
 
+# ==================
+# Node schemas
+# ==================
+
 class NodeBase(BaseModel):
     """Base schema for node."""
     title: str
@@ -28,7 +43,7 @@ class NodeBase(BaseModel):
     video_url: Optional[str] = None
     blog_links: List[str] = []
     estimated_time: Optional[str] = None
-    content: Optional[str] = None  # Main learning content (markdown-like)
+    content: Optional[str] = None
     tldr: Optional[str] = None
     why_matters: Optional[str] = None
     common_mistakes: Optional[str] = None
@@ -44,14 +59,18 @@ class NodeResponse(NodeBase):
         from_attributes = True
 
 
+# ==================
+# Progress schemas
+# ==================
+
 class ProgressBase(BaseModel):
     """Base schema for progress."""
-    status: str = "not_started"
+    status: ProgressStatus = "not_started"
 
 
 class ProgressUpdate(BaseModel):
-    """Schema for updating progress."""
-    status: str
+    """Schema for updating progress. Status is constrained at the schema level."""
+    status: ProgressStatus
 
 
 class ProgressResponse(ProgressBase):
@@ -64,14 +83,18 @@ class ProgressResponse(ProgressBase):
         from_attributes = True
 
 
+# ==================
+# Note schemas
+# ==================
+
 class NoteBase(BaseModel):
     """Base schema for note."""
     content: str = ""
 
 
 class NoteUpdate(BaseModel):
-    """Schema for updating a note."""
-    content: str
+    """Schema for updating a note. Content is bounded to prevent abuse."""
+    content: str = Field(..., max_length=50_000)
 
 
 class NoteResponse(NoteBase):
@@ -85,6 +108,10 @@ class NoteResponse(NoteBase):
     class Config:
         from_attributes = True
 
+
+# ==================
+# Journey schemas
+# ==================
 
 class JourneyRoadmap(BaseModel):
     """Roadmap progress in user journey."""
@@ -118,3 +145,24 @@ class JourneyResponse(BaseModel):
     roadmaps: List[JourneyRoadmap] = []
     recent_topics: List[JourneyTopic] = []
     notes: List[JourneyNote] = []
+
+
+# ==================
+# Roadmap request schemas
+# ==================
+
+class RoadmapRequestCreate(BaseModel):
+    """Schema for creating a roadmap request. All fields are bounded."""
+    name: str = Field(..., min_length=1, max_length=200)
+    reason: Optional[str] = Field(None, max_length=2000)
+    email: Optional[EmailStr] = None
+
+
+class RoadmapRequestResponse(BaseModel):
+    """Schema for roadmap request response."""
+    id: str
+    name: str
+    reason: Optional[str] = None
+    email: Optional[str] = None
+    created_at: str
+    status: str = "pending"

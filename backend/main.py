@@ -1,28 +1,33 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.config import settings
 from app.api.v1 import roadmaps, nodes, progress, notes, user
 
+logger = logging.getLogger(__name__)
+
 # Create FastAPI application
+# Docs are only exposed in debug mode to avoid information leakage in production.
 app = FastAPI(
     title="SkillTrail API",
     description="Visual Learning Roadmap Platform API",
     version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc"
+    docs_url="/api/docs" if settings.debug else None,
+    redoc_url="/api/redoc" if settings.debug else None,
 )
 
-# Configure CORS
+# Configure CORS — explicit methods and headers (no wildcards)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         settings.frontend_url,
-        "http://localhost:5173",
-        "http://localhost:3000"
+        "http://localhost:3000",
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-User-Id"],
 )
 
 
@@ -47,5 +52,5 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=settings.debug
+        reload=settings.debug,
     )

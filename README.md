@@ -1,74 +1,69 @@
-# SkillTrail - Visual Learning Roadmap Platform
+# SkillTrail
 
-### 🚀 **Live Demo:** [https://akshat3410.github.io/SkillTrail/](https://akshat3410.github.io/SkillTrail/)
+**Visual learning roadmap platform.** Scroll through animated trails, click topics to learn, track your progress.
 
 [![GitHub](https://img.shields.io/badge/github-repo-black.svg)](https://github.com/akshat3410/SkillTrail)
 
-A visual learning platform where users learn skills as a scrollable animated journey. Scroll through beautifully animated roadmaps, click topics to deep dive, and track your progress. Now featuring a complete **Generative AI & Prompt Engineering** course.
-
 ## Features
 
-- 🎨 **Visual Roadmaps** - Scroll through animated SVG paths that draw as you progress
-- 🤖 **GenAI Course** - Complete 27-node curriculum from Foundations to Agents
-- 📺 **Rich Media** - Video cards with thumbnails integrated directly into learning steps
-- ✨ **GSAP Animations** - Smooth, scroll-linked animations for a calm experience
-- ⚡ **Frontend First** - Works fully locally with embedded roadmap data (no backend required for demo)
-- 🔐 **Authentication** - (Optional) Login with Google or GitHub via Supabase Auth
-- 📝 **Personal Notes** - Add notes to any topic with auto-save (Local Storage supported)
-- 📊 **Progress Tracking** - Track your status across topics (Not Started / In Progress / Completed)
+- **Interactive Roadmaps** — Scroll-driven animated trails with node-by-node progression
+- **Rich Content** — Markdown lessons, embedded video cards, code blocks with syntax highlighting
+- **Progress Tracking** — Mark topics complete, track status across trails (localStorage + Supabase sync)
+- **Quiz System** — Knowledge checks with animated transitions and instant feedback
+- **Auth** — Google & GitHub login via Supabase Auth
+- **Dashboard** — Streak tracking, active paths, skill radar visualization
+- **Swiss Tech Noir Design** — Dark-mode interface with volt (#CCFF00) accents, scroll-linked animations, and a lantern cursor effect
 
 ## Tech Stack
 
-### Frontend
-- React (Vite)
-- Tailwind CSS
-- GSAP + ScrollTrigger
-- React Router
-- Supabase JS Client
-
-### Backend
-- FastAPI (Python)
-- Supabase (PostgreSQL + Auth)
-- JWT Authentication
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 16 (App Router) |
+| **Styling** | Tailwind CSS v4 + CSS custom properties |
+| **Animation** | Framer Motion, GSAP + ScrollTrigger |
+| **Icons** | Lucide React |
+| **Auth & DB** | Supabase (PostgreSQL + Auth + RLS) |
+| **Backend** | FastAPI (Python) |
+| **Utilities** | clsx, tailwind-merge |
 
 ## Prerequisites
 
 - Node.js 18+
 - Python 3.10+
-- A Supabase project (free tier works)
+- A Supabase project ([supabase.com](https://supabase.com) — free tier works)
 
 ## Setup
 
-### 1. Clone and Install
+### 1. Clone & Install
 
 ```bash
-# Install frontend dependencies
-cd frontend
+git clone https://github.com/akshat3410/SkillTrail.git
+cd SkillTrail
+
+# Frontend
+cd frontend-next
 npm install
 
-# Install backend dependencies
+# Backend
 cd ../backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 ### 2. Configure Supabase
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Go to **Authentication > Providers** and enable:
-   - Google
-   - GitHub
-3. Go to **SQL Editor** and run the contents of `supabase/schema.sql`
-4. Copy your project credentials from **Settings > API**
+2. Enable **Google** and **GitHub** under Authentication → Providers
+3. Run `supabase/schema.sql` in the SQL Editor
+4. Copy credentials from Settings → API
 
 ### 3. Environment Variables
 
-**Frontend** (`frontend/.env`):
+**Frontend** (`frontend-next/.env.local`):
 ```env
-VITE_SUPABASE_URL=your-project-url
-VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_API_URL=http://localhost:8000
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 **Backend** (`backend/.env`):
@@ -76,53 +71,69 @@ VITE_API_URL=http://localhost:8000
 SUPABASE_URL=your-project-url
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 SUPABASE_JWT_SECRET=your-jwt-secret
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:3000
 DEBUG=true
 ```
 
-> **Note**: Find the JWT Secret in **Settings > API > JWT Settings > JWT Secret**
+> Find the JWT Secret in **Settings → API → JWT Settings**
 
-### 4. Run Development Servers
+### 4. Run
 
 ```bash
-# Terminal 1 - Backend
+# Terminal 1 — Backend
 cd backend
 source venv/bin/activate
 uvicorn main:app --reload --port 8000
 
-# Terminal 2 - Frontend
-cd frontend
+# Terminal 2 — Frontend
+cd frontend-next
 npm run dev
 ```
 
-Visit `http://localhost:5173` to see the app.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
 ```
-Learning platform/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ui/          # Button, Card, ProgressToggle, Textarea
-│   │   │   ├── layout/      # Navbar, PageTransition
-│   │   │   └── roadmap/     # Roadmap, RoadmapPath, RoadmapNode
-│   │   ├── pages/           # HomePage, LoginPage, RoadmapPage, TopicPage, JourneyPage
-│   │   ├── hooks/           # useAuth, useProgress, useNotes
-│   │   ├── lib/             # supabase.js, api.js
-│   │   └── index.css        # Design system
-│   └── package.json
+SkillTrail/
+├── frontend-next/
+│   └── src/
+│       ├── app/                    # Next.js routes (10 pages)
+│       │   ├── layout.jsx          # Root layout (Navbar, Footer, LanternEffect)
+│       │   ├── page.jsx            # Homepage
+│       │   ├── dashboard/          # User dashboard
+│       │   ├── roadmaps/           # Trail catalog
+│       │   ├── roadmap/[slug]/     # Interactive roadmap viewer
+│       │   ├── topic/[id]/         # Topic content & learning
+│       │   ├── lesson/[slug]/      # Lesson reader
+│       │   ├── quiz/[slug]/        # Quiz engine
+│       │   ├── login/              # Authentication
+│       │   ├── journey/            # User journey
+│       │   └── auth/callback/      # OAuth callback
+│       ├── components/
+│       │   ├── home/               # Homepage sections (Hero, ValueGrid, CinematicScroll, etc.)
+│       │   ├── layout/             # Navbar, Footer
+│       │   ├── dashboard/          # StreakWidget, ActivePathsWidget, SkillRadarWidget
+│       │   ├── roadmap/            # InteractiveMap, NodeDetailPanel, RoadmapHeader
+│       │   ├── roadmaps/           # RoadmapCard, StoryRoadmapCard, TechLogos
+│       │   ├── learning/           # LearningContent, CodeBlock, YouTubeCard
+│       │   ├── lesson/             # LessonContent, LessonSidebar
+│       │   ├── pages/              # Full-page client components
+│       │   └── ui/                 # Compass, LanternEffect
+│       ├── hooks/                  # useAuth
+│       ├── lib/                    # api.js, localProgress.js, supabase.js
+│       └── data/                   # Mock roadmap data (Git, GenAI)
 │
 ├── backend/
 │   ├── app/
-│   │   ├── api/v1/          # roadmaps, nodes, progress, notes, user
-│   │   ├── core/            # config, auth, supabase
-│   │   └── models/          # schemas
+│   │   ├── api/v1/                 # roadmaps, nodes, progress, notes, user
+│   │   ├── core/                   # config, auth, supabase client
+│   │   └── models/                 # Pydantic schemas
 │   ├── main.py
 │   └── requirements.txt
 │
 └── supabase/
-    └── schema.sql           # Database schema + seed data
+    └── schema.sql                  # Tables, RLS policies, seed data
 ```
 
 ## API Endpoints
@@ -130,34 +141,28 @@ Learning platform/
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | GET | `/api/v1/roadmaps` | No | List all roadmaps |
-| GET | `/api/v1/roadmaps/{id}` | No | Get roadmap details |
+| GET | `/api/v1/roadmaps/{id}` | No | Get roadmap with nodes |
 | GET | `/api/v1/roadmaps/{id}/nodes` | No | Get nodes for a roadmap |
 | GET | `/api/v1/nodes/{id}` | No | Get node details |
-| GET | `/api/v1/progress` | Yes | Get all user progress |
+| GET | `/api/v1/progress` | Yes | Get user progress |
 | PUT | `/api/v1/progress/{node_id}` | Yes | Update progress status |
-| GET | `/api/v1/notes` | Yes | Get all user notes |
+| GET | `/api/v1/notes` | Yes | Get user notes |
 | PUT | `/api/v1/notes/{node_id}` | Yes | Create/update note |
-| GET | `/api/v1/user/journey` | Yes | Get user journey dashboard |
+| GET | `/api/v1/user/journey` | Yes | User journey dashboard |
 
-## Animation Architecture
+## Design System
 
-The roadmap animation uses GSAP ScrollTrigger to create a scroll-linked path drawing effect:
+**Swiss Tech Noir** — a dark, typographic-heavy design language.
 
-```javascript
-// RoadmapPath.jsx - Key animation logic
-gsap.to(path, {
-  strokeDashoffset: 0,
-  ease: "none",
-  scrollTrigger: {
-    trigger: container,
-    start: "top center",
-    end: "bottom center",
-    scrub: 0.5  // Smooth 0.5s lag for premium feel
-  }
-});
-```
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--void-black` | `#050505` | Background |
+| `--paper` | `#F2F2F2` | Text |
+| `--graphite` | `#1A1A1A` | Surfaces |
+| `--volt` | `#CCFF00` | Accent / CTAs |
+| `--muted` | `#888888` | Secondary text |
 
-Nodes animate in sequentially as they enter the viewport, with a subtle scale + fade effect.
+**Typography**: Space Grotesk (display), JetBrains Mono (body/code).
 
 ## License
 

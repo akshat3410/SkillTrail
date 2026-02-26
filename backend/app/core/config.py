@@ -4,17 +4,18 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
-    
+
     # Supabase
     supabase_url: str = ""
     supabase_service_role_key: str = ""
     supabase_jwt_secret: str = ""
-    
+
     # CORS
     frontend_url: str = "http://localhost:5173"
-    
-    # Debug
-    debug: bool = True
+
+    # Debug — defaults to False for safe production behavior.
+    # Set DEBUG=true in .env for local development.
+    debug: bool = False
 
     class Config:
         env_file = ".env"
